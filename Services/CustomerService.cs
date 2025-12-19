@@ -17,9 +17,19 @@ namespace SubscriptionBillingApi.Services
             await _customerRepository.AddAsync(customer);
         }
 
-        public async Task<Customer?> GetCustomerByIdAsync(Guid cutomerId)
+        public async Task<Customer?> GetCustomerByIdAsync(Guid customerId)
         {
-            return await _customerRepository.GetByIdAsync(cutomerId);
+            return await _customerRepository.GetByIdAsync(customerId);
+        }
+
+        public async Task<List<Customer>> GetAllCustomersAsync()
+        {
+            return await _customerRepository.GetAllAsync();
+        }
+
+        public async Task DeleteCustomerAsync(Guid customerId)
+        {
+            await _customerRepository.DeleteAsync(customerId);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace SubscriptionBillingApi.Services
             _subscriptionRepository = subscriptionRepository;
         }
 
-        public async Task CreateSubscription(Subscription subscription)
+        public async Task CreateSubscriptionAsync(Subscription subscription)
         {
             await _subscriptionRepository.AddAsync(subscription);
         }
@@ -25,6 +25,11 @@ namespace SubscriptionBillingApi.Services
         public async Task<List<Subscription>> GetAllSubscriptionsAsync()
         {
             return await _subscriptionRepository.GetAllAsync();
+        }
+
+        public async Task DeleteSubscriptionAsync(Guid subscriptionId)
+        {
+           await _subscriptionRepository.DeleteAsync(subscriptionId);
         }
     }
 }
