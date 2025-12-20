@@ -9,7 +9,7 @@ namespace SubscriptionBillingApi.Domain.Entities
         public decimal Price { get; private set; }
         public string Currency { get; private set; }
         public BillingInterval BillingInterval { get; private set; }
-        public bool isActive { get; private set; }
+        public bool IsActive { get; private set; }
 
         public SubscriptionPlan(string name, decimal price, string currency, BillingInterval billingInterval)
         {
@@ -18,7 +18,7 @@ namespace SubscriptionBillingApi.Domain.Entities
             Price = price;
             Currency = currency;
             BillingInterval = billingInterval;
-            isActive = true;
+            IsActive = true;
         }
     }
 }

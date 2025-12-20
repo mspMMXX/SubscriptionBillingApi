@@ -6,7 +6,7 @@ namespace SubscriptionBillingApi.Domain.Entities
     {
         public Guid Id { get; private set; }
         public string InvoiceNumber { get; private set; }
-        public Guid CusomerId { get; private set; }
+        public Guid CustomerId { get; private set; }
         public DateOnly PeriodStart { get; private set; }
         public DateOnly PeriodEnd { get; private set; }
         public DateTime IssuedAt { get; private set; }
@@ -18,7 +18,7 @@ namespace SubscriptionBillingApi.Domain.Entities
         {
             Id = Guid.NewGuid();
             InvoiceNumber = invoiceNumber;
-            CusomerId = cusomerId;
+            CustomerId = cusomerId;
             PeriodStart = periodStart;
             PeriodEnd = periodEnd;
             IssuedAt = DateTime.UtcNow;

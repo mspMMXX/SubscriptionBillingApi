@@ -11,7 +11,7 @@ namespace SubscriptionBillingApi.Domain.Entities
         public DateOnly? EndDate { get; private set; }
         public SubscriptionStatus Status { get; private set; }
         public DateOnly NextBillingDate { get; private set; }
-        public DateOnly CancelDate { get; private set; }
+        public DateOnly? CancelDate { get; private set; }
 
         public Subscription(Guid customerId, Guid planId, DateOnly startDate, DateOnly nextBillingDate)
         {
