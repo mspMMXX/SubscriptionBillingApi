@@ -7,10 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<ICustomerRepository, InMemoryCustomerRepository>();
-builder.Services.AddScoped<ISubscriptionPlanRepository, InMemorySubscriptionPlanRepository>();
-builder.Services.AddScoped<ISubscriptionRepository, InMemorySubscriptionRepository>();
-builder.Services.AddScoped<IInvoiceRepository, InMemoryInvoiceRepository>();
+builder.Services.AddSingleton<ICustomerRepository, InMemoryCustomerRepository>();
+builder.Services.AddSingleton<ISubscriptionPlanRepository, InMemorySubscriptionPlanRepository>();
+builder.Services.AddSingleton<ISubscriptionRepository, InMemorySubscriptionRepository>();
+builder.Services.AddSingleton<IInvoiceRepository, InMemoryInvoiceRepository>();
 
 builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<SubscriptionService>();
