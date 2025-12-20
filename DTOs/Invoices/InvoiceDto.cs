@@ -6,7 +6,7 @@ namespace SubscriptionBillingApi.DTOs.Invoices
     {
         public Guid Id { get; set; }
         public string InvoiceNumber { get; set; }
-        public Guid CusomerId { get; set; }
+        public Guid CustomerId { get; set; }
         public DateOnly PeriodStart { get; set; }
         public DateOnly PeriodEnd { get; set; }
         public DateTime IssuedAt { get; set; }

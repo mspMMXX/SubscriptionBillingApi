@@ -14,17 +14,16 @@ namespace SubscriptionBillingApi.Domain.Entities
         public string Currency { get; private set; }
         public InvoiceStatus Status { get; private set; }
 
-        public Invoice(string invoiceNumber, Guid cusomerId, DateOnly periodStart, DateOnly periodEnd, decimal totalAmount, string currency)
+        public Invoice(string invoiceNumber, Guid customerId, DateOnly periodStart, DateOnly periodEnd, DateTime issuedAt, string currency, InvoiceStatus status)
         {
             Id = Guid.NewGuid();
             InvoiceNumber = invoiceNumber;
-            CustomerId = cusomerId;
+            CustomerId = customerId;
             PeriodStart = periodStart;
             PeriodEnd = periodEnd;
-            IssuedAt = DateTime.UtcNow;
-            TotalAmount = totalAmount;
+            IssuedAt = issuedAt;
             Currency = currency;
-            Status = InvoiceStatus.Draft;
+            Status = status;
         }
 
         public void AddLine (InvoiceLine line)

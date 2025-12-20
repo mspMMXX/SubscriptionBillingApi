@@ -13,14 +13,13 @@ namespace SubscriptionBillingApi.Domain.Entities
         public DateOnly NextBillingDate { get; private set; }
         public DateOnly? CancelDate { get; private set; }
 
-        public Subscription(Guid customerId, Guid planId, DateOnly startDate, DateOnly nextBillingDate)
+        public Subscription(Guid customerId, Guid planId, DateOnly startDate)
         {
             Id = Guid.NewGuid();
             CustomerId = customerId;
             PlanId = planId;
             StartDate = startDate;
             Status = SubscriptionStatus.Active;
-            NextBillingDate = nextBillingDate;
         }
 
         public void Cancel (DateOnly cancelDate)

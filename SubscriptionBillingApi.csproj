@@ -10,11 +10,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\" />
-    <Folder Include="Middleware\" />
-    <Folder Include="Configuration\" />
-    <Folder Include="Mapping\" />
-  </ItemGroup>
-
 </Project>
