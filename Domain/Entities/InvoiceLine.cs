@@ -2,6 +2,7 @@
 {
     public class InvoiceLine
     {
+        public Invoice Invoice { get; private set; } = null!;
         public Guid Id { get; private set; }
         public Guid InvoiceId { get; private set; }
         public Guid SubscriptionId { get; private set; }

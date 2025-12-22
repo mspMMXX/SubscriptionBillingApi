@@ -40,5 +40,20 @@ namespace SubscriptionBillingApi.Repositories.InMemory
             _invoices.TryGetValue(invoiceId, out var invoice);
             return Task.FromResult(invoice);
         }
+
+        public Task UpdateAsync(Invoice invoice)
+        {
+            _invoices[invoice.Id] = invoice;
+            return Task.CompletedTask;
+        }
+
+        public Task AddLineAsync(InvoiceLine line)
+        {
+            if (_invoices.TryGetValue(line.InvoiceId, out var invoice))
+            {
+                invoice.AddLine(line);
+            }
+            return Task.CompletedTask;
+        }
     }
 }

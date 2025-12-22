@@ -13,7 +13,7 @@ namespace SubscriptionBillingApi.Domain.Entities
         public DateOnly PeriodStart { get; private set; }
         public DateOnly PeriodEnd { get; private set; }
         public DateTime IssuedAt { get; private set; }
-        public decimal TotalAmount { get; private set; }
+        public decimal TotalAmount => _lines.Sum(l => l.LineTotal);
         public string Currency { get; private set; } = string.Empty;
         public InvoiceStatus Status { get; private set; }
 
@@ -42,14 +42,14 @@ namespace SubscriptionBillingApi.Domain.Entities
             IssuedAt = issuedAt;
         }
 
-        public void AddLine (InvoiceLine line)
+        public void AddLine(InvoiceLine line)
         {
             if (Status != InvoiceStatus.Draft)
                 throw new InvalidOperationException("Cannot add lines unless invoice is Draft.");
 
             _lines.Add(line);
-            TotalAmount = CalculateTotal();
         }
+
 
         private decimal CalculateTotal() => _lines.Sum(l => l.LineTotal);
     }

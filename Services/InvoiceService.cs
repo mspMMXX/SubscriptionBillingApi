@@ -43,5 +43,12 @@ namespace SubscriptionBillingApi.Services
         {
             return await _invoiceRepository.DeleteAsync(invoiceId);
         }
+
+        public async Task UpdateInvoiceAsync(Invoice invoice)
+        {
+            await _invoiceRepository.UpdateAsync(invoice);
+        }
+
+        public Task AddLineAsync(InvoiceLine line) => _invoiceRepository.AddLineAsync(line);
     }
 }

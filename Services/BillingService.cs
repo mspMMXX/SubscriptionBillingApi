@@ -40,7 +40,7 @@ namespace SubscriptionBillingApi.Services
 
                     var line = new InvoiceLine(invoice.Id, sub.Id, description, qty, plan.Price);
                     invoice.AddLine(line);
-
+                    await _invoiceService.AddLineAsync(line);
                 }
 
                 if (!invoices.Any(i => i.Id == invoice.Id))

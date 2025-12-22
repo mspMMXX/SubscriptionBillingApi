@@ -1,0 +1,250 @@
+﻿<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Subscription Billing – Test GUI</title>
+
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 980px;
+            margin: 24px auto;
+            padding: 0 12px;
+        }
+
+        input, select {
+            padding: 10px;
+            width: 100%;
+            margin: 6px 0;
+        }
+
+        button {
+            padding: 10px 14px;
+            margin: 6px 6px 6px 0;
+            cursor: pointer;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 12px;
+            overflow: auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 12px 0;
+        }
+
+        .hint {
+            color: #555;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Subscription Billing – Test GUI</h1>
+    <p class="hint">
+        1) Backend starten → 2) Base URL prüfen → 3) Buttons klicken<br />
+        Swagger: <span id="swaggerLink"></span>
+    </p>
+
+    <!-- BASE URL -->
+    <div class="card">
+        <label><b>API Base URL</b></label>
+        <input id="baseUrl" value="https://localhost:5001" />
+        <button onclick="updateLinks()">Update Links</button>
+    </div>
+
+    <!-- PLAN -->
+    <div class="card">
+        <h2>1) Create Subscription Plan</h2>
+
+        <div class="grid">
+            <input id="planName" placeholder="Name" value="Basic" />
+            <input id="planPrice" placeholder="Price" value="9.99" />
+        </div>
+
+        <div class="grid">
+            <input id="planCurrency" placeholder="Currency" value="EUR" />
+            <select id="planInterval">
+                <option value="1">Monthly</option>
+                <option value="2">Yearly</option>
+            </select>
+
+        </div>
+
+        <button onclick="createPlan()">Create Plan</button>
+        <button onclick="loadPlans()">Load Plans</button>
+    </div>
+
+    <!-- CUSTOMER -->
+    <div class="card">
+        <h2>2) Create Customer</h2>
+
+        <div class="grid">
+            <input id="custNumber" placeholder="CustomerNumber" value="C-1001" />
+            <input id="custPhone" placeholder="Phone" value="+43 000 0000" />
+        </div>
+
+        <div class="grid">
+            <input id="custFirst" placeholder="First name" value="Max" />
+            <input id="custLast" placeholder="Last name" value="Mustermann" />
+        </div>
+
+        <input id="custEmail" placeholder="Email" value="max@example.com" />
+
+        <button onclick="createCustomer()">Create Customer</button>
+        <button onclick="loadCustomers()">Load Customers</button>
+    </div>
+
+    <!-- SUBSCRIPTION -->
+    <div class="card">
+        <h2>3) Create Subscription</h2>
+
+        <div class="grid">
+            <input id="subCustomerId" placeholder="CustomerId (GUID)" />
+            <input id="subPlanId" placeholder="PlanId (GUID)" />
+        </div>
+
+        <input id="subStartDate" placeholder="StartDate (YYYY-MM-DD)" value="2025-12-01" />
+
+        <button onclick="createSubscription()">Create Subscription</button>
+        <button onclick="loadSubscriptions()">Load Subscriptions</button>
+    </div>
+
+    <!-- BILLING -->
+    <div class="card">
+        <h2>4) Run Billing</h2>
+
+        <div class="grid">
+            <input id="billStart" placeholder="PeriodStart" value="2025-12-01" />
+            <input id="billEnd" placeholder="PeriodEnd" value="2025-12-31" />
+        </div>
+
+        <button onclick="runBilling()">Run Billing</button>
+    </div>
+
+    <!-- INVOICES -->
+    <div class="card">
+        <h2>5) Invoices</h2>
+        <button onclick="loadInvoices()">Load Invoices</button>
+    </div>
+
+    <h2>Output</h2>
+    <pre id="out">—</pre>
+
+    <script>
+        const out = (x) =>
+            document.getElementById("out").textContent =
+            typeof x === "string" ? x : JSON.stringify(x, null, 2);
+
+        const base = () =>
+            document.getElementById("baseUrl").value.replace(/\/$/, "");
+
+        function updateLinks() {
+            const url = base() + "/swagger";
+            document.getElementById("swaggerLink").innerHTML =
+                `<a href="${url}" target="_blank">${url}</a>`;
+            out({ info: "Links updated", swagger: url });
+        }
+        updateLinks();
+
+        async function request(path, method = "GET", body = null) {
+            const res = await fetch(base() + path, {
+                method,
+                headers: body ? { "Content-Type": "application/json" } : {},
+                body: body ? JSON.stringify(body) : null
+            });
+
+            const text = await res.text();
+            let data;
+            try { data = JSON.parse(text); } catch { data = text; }
+
+            if (!res.ok) throw { status: res.status, data };
+            return data;
+        }
+
+        async function createPlan() {
+            try {
+                const payload = {
+                    Name: planName.value,
+                    Price: Number(planPrice.value),
+                    Currency: planCurrency.value,
+                    BillingInterval: Number(planInterval.value) // 1 oder 2
+                };
+
+                out(await request("/api/subscriptionplans", "POST", payload));
+            } catch (e) {
+                out(e);
+            }
+        }
+
+
+
+
+        async function loadPlans() {
+            try { out(await request("/api/subscriptionplans")); }
+            catch (e) { out(e); }
+        }
+
+        async function createCustomer() {
+            try {
+                const dto = {
+                    customerNumber: custNumber.value,
+                    lastName: custLast.value,
+                    firstName: custFirst.value,
+                    phone: custPhone.value,
+                    email: custEmail.value
+                };
+                out(await request("/api/customers", "POST", dto));
+            } catch (e) { out(e); }
+        }
+
+        async function loadCustomers() {
+            try { out(await request("/api/customers")); }
+            catch (e) { out(e); }
+        }
+
+        async function createSubscription() {
+            try {
+                const dto = {
+                    customerId: subCustomerId.value,
+                    planId: subPlanId.value,
+                    startDate: subStartDate.value
+                };
+                out(await request("/api/subscriptions", "POST", dto));
+            } catch (e) { out(e); }
+        }
+
+        async function loadSubscriptions() {
+            try { out(await request("/api/subscriptions")); }
+            catch (e) { out(e); }
+        }
+
+        async function runBilling() {
+            try {
+                const dto = {
+                    periodStart: billStart.value,
+                    periodEnd: billEnd.value
+                };
+                out(await request("/api/billing/run", "POST", dto));
+            } catch (e) { out(e); }
+        }
+
+        async function loadInvoices() {
+            try { out(await request("/api/invoices")); }
+            catch (e) { out(e); }
+        }
+    </script>
+</body>
+</html>
