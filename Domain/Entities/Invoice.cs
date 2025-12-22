@@ -14,16 +14,29 @@ namespace SubscriptionBillingApi.Domain.Entities
         public string Currency { get; private set; }
         public InvoiceStatus Status { get; private set; }
 
-        public Invoice(string invoiceNumber, Guid customerId, DateOnly periodStart, DateOnly periodEnd, DateTime issuedAt, string currency, InvoiceStatus status)
+        public Invoice(Guid customerId, DateOnly periodStart, DateOnly periodEnd, string currency, InvoiceStatus status)
         {
             Id = Guid.NewGuid();
-            InvoiceNumber = invoiceNumber;
             CustomerId = customerId;
             PeriodStart = periodStart;
             PeriodEnd = periodEnd;
-            IssuedAt = issuedAt;
             Currency = currency;
             Status = status;
+        }
+
+        public void AssignInvoiceNumber(string invoicNumber)
+        {
+            if (!string.IsNullOrWhiteSpace(invoicNumber))
+                throw new InvalidOperationException("InvoiceNumber already assigned");
+
+            InvoiceNumber = invoicNumber;
+        }
+
+        public void AssignIssuedAt(DateTime issuedAt)
+        {
+            if (IssuedAt != default)
+                throw new InvalidOperationException("IssuedAt already assigned.");
+            IssuedAt = issuedAt;
         }
 
         public void AddLine (InvoiceLine line)

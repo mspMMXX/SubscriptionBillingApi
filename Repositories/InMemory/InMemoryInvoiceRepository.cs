@@ -13,10 +13,9 @@ namespace SubscriptionBillingApi.Repositories.InMemory
             return Task.CompletedTask;
         }
 
-        public Task DeleteAsync(Guid invoiceId)
-        {
-            _invoices.Remove(invoiceId);
-            return Task.CompletedTask;
+        public Task<bool> DeleteAsync(Guid invoiceId)
+        { 
+            return Task.FromResult(_invoices.Remove(invoiceId));
         }
 
         public Task<List<Invoice>> GetAllAsync()

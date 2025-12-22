@@ -20,18 +20,12 @@ namespace SubscriptionBillingApi.Controllers
         [HttpPost]
         public async Task<ActionResult<InvoiceDto>> Create([FromBody] CreateInvoiceDto dto)
         {
-            var invoiceNumber = $"INV-{DateTime.UtcNow:yyyyMMdd-HHmmss}";
-            var issuedAt = DateTime.UtcNow;
-
             var invoice = new Invoice(
-                invoiceNumber: invoiceNumber,
-                customerId: dto.CustomerId,
-                periodStart: dto.PeriodStart,
-                periodEnd: dto.PeriodEnd,
-                issuedAt: issuedAt,
-                currency: dto.Currency,
-                status: InvoiceStatus.Draft
-            );
+                dto.CustomerId,
+                dto.PeriodStart,
+                dto.PeriodEnd,
+                dto.Currency,
+                InvoiceStatus.Draft);
 
             await _invoiceService.CreateInvoiceAsync(invoice);
             var responseDto = MapToDto(invoice);
@@ -63,11 +57,8 @@ namespace SubscriptionBillingApi.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute(Name = "id")] Guid invoiceId)
         {
-            var invoice = await _invoiceService.GetInvoiceByIdAsync(invoiceId);
-            if (invoice is null)
-                return NotFound();
-
-            await _invoiceService.DeleteInvoiceAsync(invoiceId);
+            var deleted = await _invoiceService.DeleteInvoiceAsync(invoiceId);
+            if (!deleted) return NotFound();
             return NoContent();
         }
 
@@ -80,7 +71,6 @@ namespace SubscriptionBillingApi.Controllers
                 CustomerId = invoice.CustomerId,
                 PeriodStart = invoice.PeriodStart,
                 PeriodEnd = invoice.PeriodEnd,
-                IssuedAt = invoice.IssuedAt,
                 TotalAmount = invoice.TotalAmount,
                 Currency = invoice.Currency,
                 Status = invoice.Status

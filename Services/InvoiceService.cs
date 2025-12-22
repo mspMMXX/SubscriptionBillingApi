@@ -14,6 +14,10 @@ namespace SubscriptionBillingApi.Services
 
         public async Task CreateInvoiceAsync(Invoice invoice)
         {
+            var invoiceNumber = $"INV-{DateTime.UtcNow:yyyyMMdd-HHmmss}-{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
+            invoice.AssignInvoiceNumber(invoiceNumber);
+            invoice.AssignIssuedAt(DateTime.UtcNow);
+
             await _invoiceRepository.AddAsync(invoice);
         }
 
@@ -27,9 +31,9 @@ namespace SubscriptionBillingApi.Services
             return await _invoiceRepository.GetAllAsync();
         }
 
-        public async Task DeleteInvoiceAsync(Guid invoiceId)
+        public async Task<bool> DeleteInvoiceAsync(Guid invoiceId)
         {
-            await _invoiceRepository.DeleteAsync(invoiceId);
+            return await _invoiceRepository.DeleteAsync(invoiceId);
         }
     }
 }
