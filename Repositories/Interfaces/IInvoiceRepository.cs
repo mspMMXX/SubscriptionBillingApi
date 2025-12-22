@@ -8,5 +8,6 @@ namespace SubscriptionBillingApi.Repositories.Interfaces
         Task<Invoice?> GetByIdAsync(Guid invoiceId);
         Task<List<Invoice>> GetAllAsync();
         Task<bool> DeleteAsync(Guid invoiceId);
+        Task<Invoice?> FindDraftAsync(Guid customerId, DateOnly periodStart, DateOnly periodEnd);
     }
 }

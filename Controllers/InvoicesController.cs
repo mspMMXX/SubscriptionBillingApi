@@ -17,25 +17,6 @@ namespace SubscriptionBillingApi.Controllers
             _invoiceService = invoiceService;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<InvoiceDto>> Create([FromBody] CreateInvoiceDto dto)
-        {
-            var invoice = new Invoice(
-                dto.CustomerId,
-                dto.PeriodStart,
-                dto.PeriodEnd,
-                dto.Currency,
-                InvoiceStatus.Draft);
-
-            await _invoiceService.CreateInvoiceAsync(invoice);
-            var responseDto = MapToDto(invoice);
-
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id = invoice.Id },
-                responseDto);
-        }
-
         [HttpGet]
         public async Task<ActionResult<List<InvoiceDto>>> GetAll()
         {
@@ -71,6 +52,7 @@ namespace SubscriptionBillingApi.Controllers
                 CustomerId = invoice.CustomerId,
                 PeriodStart = invoice.PeriodStart,
                 PeriodEnd = invoice.PeriodEnd,
+                IssuedAt = invoice.IssuedAt,
                 TotalAmount = invoice.TotalAmount,
                 Currency = invoice.Currency,
                 Status = invoice.Status

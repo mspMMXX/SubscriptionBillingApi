@@ -16,6 +16,7 @@ builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<SubscriptionService>();
 builder.Services.AddScoped<InvoiceService>();
 builder.Services.AddScoped<SubscriptionPlanService>();
+builder.Services.AddScoped<BillingService>();
 
 // Learn more about configuring Swagger/OpenAPI at Ok https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

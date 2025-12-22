@@ -1,4 +1,5 @@
 ﻿using SubscriptionBillingApi.Domain.Entities;
+using SubscriptionBillingApi.Domain.Enums;
 using SubscriptionBillingApi.Repositories.Interfaces;
 
 namespace SubscriptionBillingApi.Repositories.InMemory
@@ -28,6 +29,16 @@ namespace SubscriptionBillingApi.Repositories.InMemory
         {
             _subscriptions.TryGetValue(subscriptionId, out var subscription);
             return Task.FromResult(subscription);
+        }
+
+        public Task<List<Subscription>> GetDueSubscriptionsAsync(DateOnly periodStart, DateOnly periodEnd)
+        {
+            var result = _subscriptions.Values
+                .Where(s => s.Status == SubscriptionStatus.Active)
+                .Where(s => s.StartDate <= periodEnd)
+                .ToList(); 
+
+            return Task.FromResult(result);
         }
     }
 }

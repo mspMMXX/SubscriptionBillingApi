@@ -1,5 +1,6 @@
 ﻿using SubscriptionBillingApi.Domain.Entities;
 using SubscriptionBillingApi.Repositories.Interfaces;
+using SubscriptionBillingApi.Domain.Enums;
 
 namespace SubscriptionBillingApi.Repositories.InMemory
 {
@@ -16,6 +17,17 @@ namespace SubscriptionBillingApi.Repositories.InMemory
         public Task<bool> DeleteAsync(Guid invoiceId)
         { 
             return Task.FromResult(_invoices.Remove(invoiceId));
+        }
+
+        public Task<Invoice?> FindDraftAsync(Guid customerId, DateOnly periodStart, DateOnly periodEnd)
+        {
+            var invoice = _invoices.Values.FirstOrDefault(i =>
+            i.CustomerId == customerId &&
+            i.PeriodStart == periodStart &&
+            i.PeriodEnd == periodEnd &&
+            i.Status == InvoiceStatus.Draft);
+
+            return Task.FromResult(invoice);
         }
 
         public Task<List<Invoice>> GetAllAsync()

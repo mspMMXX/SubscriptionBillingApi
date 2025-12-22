@@ -1,5 +1,6 @@
 ﻿using SubscriptionBillingApi.Repositories.Interfaces;
 using SubscriptionBillingApi.Domain.Entities;
+using SubscriptionBillingApi.Domain.Enums;
 
 namespace SubscriptionBillingApi.Services
 {
@@ -12,18 +13,25 @@ namespace SubscriptionBillingApi.Services
             _invoiceRepository = invoiceRepository;
         }
 
-        public async Task CreateInvoiceAsync(Invoice invoice)
+        public async Task<Invoice> GetOrCreateDraftInvoice(Guid customerId, DateOnly periodStart, DateOnly periodEnd, string currency)
         {
+            var existing = await _invoiceRepository.FindDraftAsync(customerId, periodStart, periodEnd);
+            if (existing is not null) return existing;
+
+            var invoice = new Invoice(customerId, periodStart, periodEnd, currency, InvoiceStatus.Draft);
+
             var invoiceNumber = $"INV-{DateTime.UtcNow:yyyyMMdd-HHmmss}-{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
+
             invoice.AssignInvoiceNumber(invoiceNumber);
             invoice.AssignIssuedAt(DateTime.UtcNow);
 
             await _invoiceRepository.AddAsync(invoice);
+            return invoice;
         }
 
-        public async Task<Invoice?> GetInvoiceByIdAsync(Guid invoiceId)
+        public Task<Invoice?> GetInvoiceByIdAsync(Guid invoiceId)
         {
-            return await _invoiceRepository.GetByIdAsync(invoiceId);
+            return _invoiceRepository.GetByIdAsync(invoiceId);
         }
 
         public async Task<List<Invoice>> GetAllInvoicesAsync()
