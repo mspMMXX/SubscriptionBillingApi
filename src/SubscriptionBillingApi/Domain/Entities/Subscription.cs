@@ -21,16 +21,5 @@ namespace SubscriptionBillingApi.Domain.Entities
             StartDate = startDate;
             Status = SubscriptionStatus.Active;
         }
-
-        public void Cancel (DateOnly cancelDate)
-        {
-            //Implementation for canceling the subscription
-        }
-
-        public bool IsActiveOn(DateOnly date)
-        {
-            //Implementation for checking if the subscription is active on a given date
-            throw new NotImplementedException();
-        }
     }
 }

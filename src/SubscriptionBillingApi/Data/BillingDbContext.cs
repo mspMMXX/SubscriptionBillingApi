@@ -3,10 +3,18 @@ using SubscriptionBillingApi.Domain.Entities;
 
 namespace SubscriptionBillingApi.Data
 {
+    /// <summary>
+    /// Entity Framework Core DbContext for the Subscription & Billing domain.
+    /// Defines DbSets and configures persistence mappings for domain entities.
+    /// </summary>
     public class BillingDbContext : DbContext
     {
+        /// <summary>
+        /// DbContext is configured via dependency injection (connection string/provider in Program.cs).
+        /// </summary>
         public BillingDbContext(DbContextOptions<BillingDbContext> options) : base(options) { }
 
+        // Aggregate roots / entities exposed to EF Core
         public DbSet<Customer> Customers => Set<Customer>();
         public DbSet<SubscriptionPlan> SubscriptionPlans => Set<SubscriptionPlan>();
         public DbSet<Subscription> Subscriptions => Set<Subscription>();
@@ -17,6 +25,8 @@ namespace SubscriptionBillingApi.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // EF Core (especially with relational providers) stores DateOnly as DateTime by default,
+            // therefore we explicitly define conversions for DateOnly and nullable DateOnly.
             modelBuilder.Entity<Subscription>()
                 .Property(x => x.StartDate)
                 .HasConversion(v => v.ToDateTime(TimeOnly.MinValue), v => DateOnly.FromDateTime(v));
@@ -47,10 +57,15 @@ namespace SubscriptionBillingApi.Data
 
             modelBuilder.Entity<Invoice>(b =>
             {
+                // Primary key
                 b.HasKey(i => i.Id);
 
+                // Domain model exposes Lines (often read-only) while EF persists the backing field.
+                // We ignore the public property and map the private field collection instead.
                 b.Ignore(i => i.Lines);
 
+                // Field-based mapping for the invoice lines collection ("_lines").
+                // Cascade delete ensures invoice lines are removed when the invoice is deleted.
                 b.HasMany<InvoiceLine>("_lines")
                  .WithOne(l => l.Invoice)
                  .HasForeignKey(l => l.InvoiceId)
@@ -59,6 +74,7 @@ namespace SubscriptionBillingApi.Data
 
             modelBuilder.Entity<InvoiceLine>(b =>
             {
+                // Primary key
                 b.HasKey(l => l.Id);
             });
         }

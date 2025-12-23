@@ -10,6 +10,7 @@
         public int Quantity { get; private set; }
         public decimal UnitPrice { get; private set; }
         public decimal LineTotal => Quantity * UnitPrice;
+
         public InvoiceLine(Guid invoiceId, Guid subscriptionId, string description, int quantity, decimal unitPrice)
         {
             if (invoiceId == Guid.Empty)

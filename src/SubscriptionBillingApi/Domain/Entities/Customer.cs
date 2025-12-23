@@ -22,12 +22,5 @@ namespace SubscriptionBillingApi.Domain.Entities
             Email = email;
             CreatedAt = DateTime.UtcNow;
         }
-
-        public Subscription CreateSubscription(Guid planId, DateOnly startDate)
-        {
-            // Implementation for creating a new subscription for the customer
-            throw new NotImplementedException();
-
-        }
     }
 }

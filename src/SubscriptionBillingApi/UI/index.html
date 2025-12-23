@@ -2,10 +2,12 @@
 <html lang="de">
 <head>
     <meta charset="utf-8" />
+    <!-- Makes the page responsive on mobile devices -->
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Subscription Billing – Test GUI</title>
 
     <style>
+        /* Simple, dependency-free styling for a small test harness UI */
         body {
             font-family: system-ui, sans-serif;
             max-width: 980px;
@@ -31,12 +33,14 @@
             overflow: auto;
         }
 
+        /* Two-column layout for form fields */
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
         }
 
+        /* Visual grouping for each test step */
         .card {
             border: 1px solid #ddd;
             border-radius: 10px;
@@ -58,14 +62,14 @@
         Swagger: <span id="swaggerLink"></span>
     </p>
 
-    <!-- BASE URL -->
+    <!-- Base URL used for all API calls (useful when ports/hosts change) -->
     <div class="card">
         <label><b>API Base URL</b></label>
         <input id="baseUrl" value="https://localhost:5001" />
         <button onclick="updateLinks()">Update Links</button>
     </div>
 
-    <!-- PLAN -->
+    <!-- 1) Subscription Plan -->
     <div class="card">
         <h2>1) Create Subscription Plan</h2>
 
@@ -87,7 +91,7 @@
         <button onclick="loadPlans()">Load Plans</button>
     </div>
 
-    <!-- CUSTOMER -->
+    <!-- 2) Customer -->
     <div class="card">
         <h2>2) Create Customer</h2>
 
@@ -107,7 +111,7 @@
         <button onclick="loadCustomers()">Load Customers</button>
     </div>
 
-    <!-- SUBSCRIPTION -->
+    <!-- 3) Subscription -->
     <div class="card">
         <h2>3) Create Subscription</h2>
 
@@ -122,7 +126,7 @@
         <button onclick="loadSubscriptions()">Load Subscriptions</button>
     </div>
 
-    <!-- BILLING -->
+    <!-- 4) Billing run -->
     <div class="card">
         <h2>4) Run Billing</h2>
 
@@ -134,23 +138,27 @@
         <button onclick="runBilling()">Run Billing</button>
     </div>
 
-    <!-- INVOICES -->
+    <!-- 5) Invoices -->
     <div class="card">
         <h2>5) Invoices</h2>
         <button onclick="loadInvoices()">Load Invoices</button>
     </div>
 
     <h2>Output</h2>
+    <!-- Raw JSON output from the backend (or error object) -->
     <pre id="out">—</pre>
 
     <script>
+        // Writes either a string or a JSON object into the output panel
         const out = (x) =>
             document.getElementById("out").textContent =
             typeof x === "string" ? x : JSON.stringify(x, null, 2);
 
+        // Base URL helper (also removes a trailing slash)
         const base = () =>
             document.getElementById("baseUrl").value.replace(/\/$/, "");
 
+        // Updates the Swagger link based on the current base URL
         function updateLinks() {
             const url = base() + "/swagger";
             document.getElementById("swaggerLink").innerHTML =
@@ -159,6 +167,10 @@
         }
         updateLinks();
 
+        // Small fetch wrapper:
+        // - sends JSON body if provided
+        // - parses JSON response when possible
+        // - throws a structured error for non-2xx responses
         async function request(path, method = "GET", body = null) {
             const res = await fetch(base() + path, {
                 method,
@@ -174,8 +186,11 @@
             return data;
         }
 
+        // --- API calls (mirrors your controller endpoints) ---
+
         async function createPlan() {
             try {
+                // Note: property names should match your CreateSubscriptionPlanDto binding
                 const payload = {
                     Name: planName.value,
                     Price: Number(planPrice.value),
@@ -188,9 +203,6 @@
                 out(e);
             }
         }
-
-
-
 
         async function loadPlans() {
             try { out(await request("/api/subscriptionplans")); }

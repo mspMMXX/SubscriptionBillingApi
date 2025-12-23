@@ -16,9 +16,13 @@ namespace SubscriptionBillingApi.Controllers
             _subscriptionService = subscriptionService;
         }
 
+        /// <summary>
+        /// Creates a new subscription for a customer and a subscription plan.
+        /// </summary>
         [HttpPost]
         public async Task<ActionResult<SubscriptionDto>> Create([FromBody] CreateSubscriptionDto dto)
         {
+            // Create the subscription domain entity from the request DTO
             var subscription = new Subscription(
                 dto.CustomerId, 
                 dto.PlanId, 
@@ -33,6 +37,9 @@ namespace SubscriptionBillingApi.Controllers
                 responseDto);
         }
 
+        /// <summary>
+        /// Returns all subscriptions.
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<List<SubscriptionDto>>> GetAll()
         {
@@ -41,6 +48,9 @@ namespace SubscriptionBillingApi.Controllers
             return Ok(dtos);
         }
 
+        /// <summary>
+        /// Returns a single subscription by id, or 404 if it does not exist.
+        /// </summary>
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<SubscriptionDto>> GetById([FromRoute(Name = "id")] Guid subscriptionId)
         {
@@ -51,6 +61,10 @@ namespace SubscriptionBillingApi.Controllers
             return Ok(MapToDto(subscription));
         }
 
+        /// <summary>
+        /// Deletes a subscription by id.
+        /// Returns 204 on success or 404 if it does not exist.
+        /// </summary>
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute(Name = "id")] Guid subscriptionId)
         {
@@ -62,6 +76,9 @@ namespace SubscriptionBillingApi.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Maps the subscription domain entity to an API DTO.
+        /// </summary>
         private static SubscriptionDto MapToDto(Subscription subscription)
         {
             return new SubscriptionDto
@@ -75,7 +92,6 @@ namespace SubscriptionBillingApi.Controllers
                 NextBillingDate = subscription.NextBillingDate,
                 CancelDate = subscription.CancelDate
             };
-
         }
     }
 }

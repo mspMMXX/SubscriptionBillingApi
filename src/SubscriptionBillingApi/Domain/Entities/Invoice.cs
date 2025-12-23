@@ -49,8 +49,5 @@ namespace SubscriptionBillingApi.Domain.Entities
 
             _lines.Add(line);
         }
-
-
-        private decimal CalculateTotal() => _lines.Sum(l => l.LineTotal);
     }
 }

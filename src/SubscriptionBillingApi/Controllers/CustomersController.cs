@@ -16,9 +16,13 @@ namespace SubscriptionBillingApi.Controllers
             _customerService = customerService;
         }
 
+        /// <summary>
+        /// Creates a new customer and returns the created resource (201) including its location.
+        /// </summary>
         [HttpPost]
         public async Task<ActionResult<CustomerDto>> Create([FromBody] CreateCustomerDto dto)
         {
+            // Create the domain entity from the incoming request DTO
             var customer = new Customer(
                 dto.CustomerNumber,
                 dto.LastName,
@@ -27,7 +31,9 @@ namespace SubscriptionBillingApi.Controllers
                 dto.Email
                 );
 
+            // Persist via service layer (business/persistence coordination)
             await _customerService.CreateCustomerAsync(customer);
+            // Return a DTO (do not expose domain entities directly)
             var responseDto = MapToDto(customer);
 
             return CreatedAtAction(
@@ -36,6 +42,9 @@ namespace SubscriptionBillingApi.Controllers
                 responseDto);
         }
 
+        /// <summary>
+        /// Returns all customers.
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<List<CustomerDto>>> GetAll()
         {
@@ -44,6 +53,9 @@ namespace SubscriptionBillingApi.Controllers
             return Ok(dtos);
         }
 
+        /// <summary>
+        /// Returns a single customer by id, or 404 if it does not exist.
+        /// </summary>
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<CustomerDto>> GetById([FromRoute(Name = "id")] Guid customerId)
         {
@@ -54,9 +66,13 @@ namespace SubscriptionBillingApi.Controllers
             return Ok(MapToDto(customer));
         }
 
+        /// <summary>
+        /// Deletes a customer by id. Returns 204 on success, or 404 if it does not exist.
+        /// </summary>
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute(Name = "id")] Guid customerId)
         {
+            // Explicit existence check to return a clean 404 instead of silently doing nothing
             var customer = await _customerService.GetCustomerByIdAsync(customerId);
             if (customer is null)
                 return NotFound();
@@ -65,6 +81,10 @@ namespace SubscriptionBillingApi.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Maps the domain entity to an API DTO.
+        /// Kept as a static helper to ensure consistent output formatting.
+        /// </summary>
         public static CustomerDto MapToDto(Customer customer)
         {
             return new CustomerDto

@@ -16,9 +16,13 @@ namespace SubscriptionBillingApi.Controllers
             _subscriptionPlanService = subscriptionPlanService;
         }
 
+        /// <summary>
+        /// Creates a new subscription plan and returns the created resource (201).
+        /// </summary>
         [HttpPost]
         public async Task<ActionResult<SubscriptionPlanDto>> Create([FromBody] CreateSubscriptionPlanDto dto)
         {
+            // Create domain entity from request DTO
             var subscriptionPlan = new SubscriptionPlan(
                 dto.Name, 
                 dto.Price, 
@@ -31,6 +35,9 @@ namespace SubscriptionBillingApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = subscriptionPlan.Id }, responseDto);
         }
 
+        /// <summary>
+        /// Returns all subscription plans.
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<List<SubscriptionPlanDto>>> GetAll()
         {
@@ -39,6 +46,9 @@ namespace SubscriptionBillingApi.Controllers
             return Ok(dtos);
         }
 
+        /// <summary>
+        /// Returns a single subscription plan by id, or 404 if it does not exist.
+        /// </summary>
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<SubscriptionPlanDto>> GetById([FromRoute(Name = "id")] Guid subscriptionPlanId)
         {
@@ -49,6 +59,10 @@ namespace SubscriptionBillingApi.Controllers
             return Ok(MapToDto(subscriptionPlan));
         }
 
+        /// <summary>
+        /// Deletes a subscription plan by id.
+        /// Returns 204 on success or 404 if it does not exist.
+        /// </summary>
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute(Name = "id")] Guid subscriptionPlanId)
         {
@@ -60,6 +74,9 @@ namespace SubscriptionBillingApi.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Maps the subscription plan domain entity to an API DTO.
+        /// </summary>
         private static SubscriptionPlanDto MapToDto(SubscriptionPlan subscriptionPlan)
         {
             return new SubscriptionPlanDto

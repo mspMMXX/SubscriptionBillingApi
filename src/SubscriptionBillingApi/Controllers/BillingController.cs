@@ -15,6 +15,9 @@ namespace SubscriptionBillingApi.Controllers
             _billingService = billingService;
         }
 
+        /// <summary>
+        /// Executes a billing run for a given period and generates invoices.
+        /// </summary>
         [HttpPost("run")]
         public async Task<ActionResult<List<BillingDto>>> Run([FromBody] CreateBillingDto dto)
         {
