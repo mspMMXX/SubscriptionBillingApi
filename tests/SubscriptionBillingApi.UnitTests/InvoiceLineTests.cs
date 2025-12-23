@@ -1,28 +1,38 @@
 ﻿using SubscriptionBillingApi.Domain.Entities;
 using Xunit;
 
-namespace SubscriptionBillingApi.UnitTests.Domain;
+namespace SubscriptionBillingApi.UnitTests;
 
 public class InvoiceLineTests
 {
     [Fact]
-    public void LineTotal_is_quantity_times_unit_price()
+    public void LineTotal_IsQuantityTimesUnitPrice()
     {
-        // Arrange
         var invoiceId = Guid.NewGuid();
         var subscriptionId = Guid.NewGuid();
 
-        var line = new InvoiceLine(
-            invoiceId,
-            subscriptionId,
-            description: "Test line",
-            quantity: 3,
-            unitPrice: 9.99m);
+        var line = new InvoiceLine(invoiceId, subscriptionId, "Test", 3, 9.99m);
 
-        // Act
-        var total = line.LineTotal;
+        Assert.Equal(29.97m, line.LineTotal);
+    }
 
-        // Assert
-        Assert.Equal(29.97m, total);
+    [Fact]
+    public void Ctor_Throws_WhenQuantityIsZeroOrLess()
+    {
+        var invoiceId = Guid.NewGuid();
+        var subscriptionId = Guid.NewGuid();
+
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new InvoiceLine(invoiceId, subscriptionId, "Test", 0, 1m));
+    }
+
+    [Fact]
+    public void Ctor_Throws_WhenDescriptionIsMissing()
+    {
+        var invoiceId = Guid.NewGuid();
+        var subscriptionId = Guid.NewGuid();
+
+        Assert.Throws<ArgumentException>(() =>
+            new InvoiceLine(invoiceId, subscriptionId, "", 1, 1m));
     }
 }
